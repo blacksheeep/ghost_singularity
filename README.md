@@ -1,5 +1,8 @@
 [[Paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9851423)] [[Habr](https://habr.com/ru/company/sberbank/blog/645919/)]
 
+# Check [BUILD_SINGULARITY.md](./BUILD_SINGULARITY.md) to build a singularity container
+
+
 # 👻 GHOST: Generative High-fidelity One Shot Transfer 
 
 Our paper ["GHOST—A New Face Swap Approach for Image and Video Domains"](https://ieeexplore.ieee.org/abstract/document/9851423) has been published on IEEE Xplore.
