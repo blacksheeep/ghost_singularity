@@ -1,0 +1,77 @@
+Bootstrap: docker
+From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
+
+%setup
+    # Copy the entire repository into the container
+    cp -r . ${SINGULARITY_ROOTFS}/ghost/
+
+%post
+    # Update and install dependencies
+    apt-get update && apt-get install -y \
+        git \
+        ffmpeg \
+        libgl1-mesa-glx \
+        build-essential \
+        cmake \
+        pkg-config \
+        libglib2.0-0 \
+        libsm6 \
+        libxext6 \
+        libxrender-dev \
+        libgtk2.0-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev
+
+    # Set working directory
+    cd /ghost
+
+    # Remove opencv from requirements (if necessary)
+    sed -i '/opencv-python/d' requirements-docker.txt
+
+    # Install Python packages
+    pip3 install --upgrade pip setuptools wheel
+    pip3 install -r requirements-docker.txt
+
+    # Install OpenCV 4.10.0 from source
+    cd /tmp
+    rm -rf opencv opencv_contrib
+    git clone --branch 4.10.0 --depth 1 https://github.com/opencv/opencv.git
+    git clone --branch 4.10.0 --depth 1 https://github.com/opencv/opencv_contrib.git
+
+    cd opencv
+    mkdir build && cd build
+    cmake -D CMAKE_BUILD_TYPE=RELEASE \
+          -D CMAKE_INSTALL_PREFIX=/usr/local \
+          -D OPENCV_ENABLE_NONFREE=ON \
+          -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib/modules \
+          -D PYTHON3_EXECUTABLE=$(which python3) \
+          -D BUILD_opencv_python3=yes \
+          -D PYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+          -D PYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+          -D WITH_CUDA=ON \
+          -D CUDA_ARCH_BIN=all \
+          -D WITH_CUBLAS=ON \
+          -D WITH_FFMPEG=ON \
+          ..
+
+    make -j$(nproc)
+    make install
+    ldconfig
+
+    # Clean up
+    cd /
+    rm -rf /tmp/opencv /tmp/opencv_contrib
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+    # Set permissions for the repository
+    chmod -R 755 /ghost
+
+%runscript
+    python /ghost/inference.py
+
+%environment
+    export LC_ALL=C
+    export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+

@@ -2,6 +2,8 @@ opencv-python
 onnx==1.9.0
 onnxruntime==1.4.0
 numpy<=1.20
+Pillow<=9.5.0  # Added version constraint
+matplotlib<=3.5.3  # Added version constraint
 mxnet
 scikit-image
 insightface==0.2.1
