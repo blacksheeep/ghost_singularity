@@ -5,7 +5,7 @@
 
     1. clone the repo
     2. run: ``` $ chmod +x ./download_models.sh && download_models.sh ```
-    3. run: sudo sudo singularity build ghost_singularity.sif ghost_singularity.def
+    3. run: sudo singularity build ghost_singularity.sif ghost_singularity.def
 
 
 ## Run the singularity container: 
