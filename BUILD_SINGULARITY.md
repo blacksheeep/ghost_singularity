@@ -11,7 +11,7 @@
 ## Run the singularity container: 
 ```
 $ singularity exec --nv \
-    ghost.sif python inference.py \
+    ghost_singularity.sif python inference.py \
     --batch_size 8 \
     --source_paths ./examples/images/beckham.jpg \
     --target_video ./examples/videos/dance.mp4 \
