@@ -10,12 +10,13 @@
 
 ## Run the singularity container: 
 ```
-$ singularity exec --nv \
-    ghost_singularity.sif python inference.py \
+$ singularity run --nv \
+    -B $PWD:/data \
+    ghost_singularity.sif \
     --batch_size 8 \
-    --source_paths ./examples/images/beckham.jpg \
-    --target_video ./examples/videos/dance.mp4 \
-    --out_video_name ./output.mp4
+    --source_paths /data/examples/images/beckham.jpg \
+    --target_video /data/examples/videos/dance.mp4 \
+    --out_video_name /data/output.mp4
 ```
 
 

@@ -38,7 +38,6 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
     rm -rf opencv opencv_contrib
     git clone --branch 4.10.0 --depth 1 https://github.com/opencv/opencv.git
     git clone --branch 4.10.0 --depth 1 https://github.com/opencv/opencv_contrib.git
-
     cd opencv
     mkdir build && cd build
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
@@ -54,7 +53,6 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
           -D WITH_CUBLAS=ON \
           -D WITH_FFMPEG=ON \
           ..
-
     make -j$(nproc)
     make install
     ldconfig
@@ -69,9 +67,10 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
     chmod -R 755 /ghost
 
 %runscript
-    python /ghost/inference.py
+    cd /ghost
+    python inference.py "$@"
 
 %environment
     export LC_ALL=C
     export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-
+    export PYTHONPATH=/ghost:$PYTHONPATH
