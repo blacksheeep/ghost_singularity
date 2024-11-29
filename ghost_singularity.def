@@ -22,7 +22,7 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
         nasm \
         wget
 
-    # Build FFmpeg from source (using a version compatible with older GLIBC)
+    # Build FFmpeg from source
     cd /tmp
     wget https://ffmpeg.org/releases/ffmpeg-4.2.7.tar.bz2
     tar xjf ffmpeg-4.2.7.tar.bz2
@@ -45,8 +45,10 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
     # Remove opencv from requirements (if necessary)
     sed -i '/opencv-python/d' requirements-docker.txt
 
-    # Install Python packages
+    # Install Python packages with specific numpy version
     pip3 install --upgrade pip setuptools wheel
+    pip3 install numpy==1.19.5  # Install numpy first
+    pip3 install scipy==1.5.4   # Compatible scipy version
     pip3 install -r requirements-docker.txt
 
     # Install OpenCV 4.10.0 from source
@@ -73,6 +75,10 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
     make install
     ldconfig
 
+    # Create output directory
+    mkdir -p /output
+    chmod 777 /output
+
     # Clean up
     cd /
     rm -rf /tmp/opencv /tmp/opencv_contrib /tmp/ffmpeg*
@@ -84,7 +90,6 @@ From: pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
 
 %runscript
     cd /ghost
-    mkdir -p /output
     python inference.py "$@"
 
 %environment
